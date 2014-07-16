@@ -1,0 +1,53 @@
+<p id="notice"><%= notice %></p>
+
+<div style='width: 100%;'>
+  <div id="map" style='width: 100%; height: 200px;'></div>
+</div>
+
+<script type="text/javascript">
+handler = Gmaps.build('Google');
+handler.buildMap({ 
+  provider: {
+    styles: [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]},{"featureType":"transit.line","elementType": "geometry","stylers":[{"visibility":"off"}]},{"featureType":"landscape","stylers":[{"color":"#f2e5d4"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}]
+  }, 
+  internal: {id: 'map'}}, 
+  function(){
+    markers = handler.addMarkers(<%=raw @hash.to_json %>);
+  handler.bounds.extendWith(markers);
+  handler.fitMapToBounds();
+  handler.getMap().setZoom(16);
+  handler.getMap().setCenter(new google.maps.LatLng(<%= @place.latitude %>, <%= @place.longitude %>));
+});
+</script>
+<div id="instagramfeed">
+  <ul>
+    <% @results.take(5).each do |pic| %>
+      <% standard_resolution = pic["images"]['standard_resolution'] %>
+      <% image_url = standard_resolution['url'] %>
+      <% height = standard_resolution['height'] %>
+      <% width = standard_resolution['width'] %>
+        <li><%= image_tag image_url, height: height, width: width %></li>  
+    <% end %>
+  </ul>
+</div>
+
+<div id="copy-wrapper">
+  <div id="placeinfo">
+    <h2>  <%= @place.name %></h2>
+    <p class="address">   <%= @place.address %></p>
+    <p class="description">   <%= @place.description %></p>
+  </div> <!-- END PLACEINFO -->
+<!--  <p> <%= @place.latitude %> <%= @place.longitude %></p> -->
+<p class="add">listing not quite right? <%= link_to 'edit', edit_place_path(@place) %> | <%= link_to 'remove', @place, method: :delete, data: { confirm: 'Are you sure?' } %>  </p>
+
+  <%= commontator_thread(@place) %>
+
+
+
+</div> <!-- END COPY WRAPPER DIV -->
+
+</div>
+<br />
+<!-- <%= link_to 'Edit', edit_place_path(@place) %> |
+<%= link_to 'Back to Home', places_path %> -->
+</div>
